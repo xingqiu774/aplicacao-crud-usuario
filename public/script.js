@@ -8,13 +8,12 @@ let paginaAtual = 1;
 const usuariosPorPagina = 20;
 
 // Define o campo e a ordem (crescente ou decrescente) para a ordenação
-let ordemAtual = { campo: 'nome', crescente: true };
-
+let ordemAtual = { campo: "nome", crescente: true };
 
 // Função assíncrona que carrega os usuários da API
 async function carregarUsuarios() {
   // Faz uma requisição para a API que retorna 200 usuários
-  const resposta = await fetch('http://localhost:3000/list-users/200');
+  const resposta = await fetch("http://0.0.0.0:3000/list-users/200"); //Testar passando como parâmetro 1000000
 
   // Converte a resposta em JSON e armazena no array global
   usuarios = await resposta.json();
@@ -23,12 +22,17 @@ async function carregarUsuarios() {
   atualizarPaginacao();
 }
 
-
 // Função que compara duas strings, com ou sem normalização completa
 function comparaStrings(a, b, fullCompare = true) {
   // Normaliza as strings para remover acentos e coloca em minúsculas
-  const sa = a.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
-  const sb = b.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+  const sa = a
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
+  const sb = b
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
 
   // Determina quantos caracteres serão comparados: todos ou apenas 3
   const len = fullCompare ? Math.max(sa.length, sb.length) : 3;
@@ -45,7 +49,6 @@ function comparaStrings(a, b, fullCompare = true) {
   // Se todos os caracteres comparados forem iguais
   return 0;
 }
-
 
 // Função de ordenação com o algoritmo da bolha
 function bubbleSort(arr, key, crescente = true) {
@@ -69,13 +72,13 @@ function bubbleSort(arr, key, crescente = true) {
   }
 }
 
-
 // Função que ordena a tabela com base no campo clicado
 function ordenarTabela(campo) {
   // Inverte a ordem se o mesmo campo for clicado novamente
-  ordemAtual = (ordemAtual.campo === campo) ?
-    { campo, crescente: !ordemAtual.crescente } :
-    { campo, crescente: true };
+  ordemAtual =
+    ordemAtual.campo === campo
+      ? { campo, crescente: !ordemAtual.crescente }
+      : { campo, crescente: true };
 
   // Ordena o array de usuários
   bubbleSort(usuarios, ordemAtual.campo, ordemAtual.crescente);
@@ -83,7 +86,6 @@ function ordenarTabela(campo) {
   // Atualiza a tabela com os dados ordenados
   atualizarPaginacao();
 }
-
 
 // Atualiza os dados exibidos na página atual
 function atualizarPaginacao() {
@@ -93,8 +95,8 @@ function atualizarPaginacao() {
   paginaAtual = Math.max(1, Math.min(paginaAtual, totalPaginas));
 
   // Atualiza os elementos de interface que mostram os números de página
-  document.getElementById('paginaAtual').innerText = paginaAtual;
-  document.getElementById('totalPaginas').innerText = totalPaginas;
+  document.getElementById("paginaAtual").innerText = paginaAtual;
+  document.getElementById("totalPaginas").innerText = totalPaginas;
 
   // Define os índices de início e fim para o slice do array
   const inicio = (paginaAtual - 1) * usuariosPorPagina;
@@ -104,20 +106,17 @@ function atualizarPaginacao() {
   renderizarTabela(usuarios.slice(inicio, fim));
 }
 
-
 // Função chamada ao clicar em "Página Anterior"
 function paginaAnterior() {
   paginaAtual--;
   atualizarPaginacao();
 }
 
-
 // Função chamada ao clicar em "Próxima Página"
 function proximaPagina() {
   paginaAtual++;
   atualizarPaginacao();
 }
-
 
 // Função que desenha a tabela com os dados de usuários
 function renderizarTabela(data) {
@@ -126,7 +125,7 @@ function renderizarTabela(data) {
   tbody.innerHTML = ""; // Limpa o conteúdo anterior da tabela
 
   // Insere uma linha HTML para cada usuário no array recebido
-  data.forEach(u => {
+  data.forEach((u) => {
     tbody.innerHTML += `
       <tr>
         <td>${u.nome}</td>
@@ -135,8 +134,17 @@ function renderizarTabela(data) {
         <td>${u.email}</td>
       </tr>`;
   });
+  // Existe esta outra forma de iterar os elementos desse vetor de objetos:
+  //  for(u of data){
+  //       tbody.innerHTML += `
+  //       <tr>
+  //         <td>${u.nome}</td>
+  //         <td>${u.idade}</td>
+  //         <td>${u.endereco}</td>
+  //         <td>${u.email}</td>
+  //       </tr>`;
+  // }
 }
-
 
 // Quando a página for carregada, executa a função que busca os usuários
 window.onload = carregarUsuarios;

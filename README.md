@@ -12,21 +12,21 @@ Universidade Federal do Ceará (UFC)
 
 ## ✅ Requisitos Funcionais
 
-| ID      | Descrição                                     |
-|---------|-----------------------------------------------|
-| RF0001  | Gerar usuários fictícios com nome, idade, endereço e e-mail |
-| RF0002  | Listar os usuários em uma interface web com paginação |
-| RF0003  | Ordenar os usuários por nome ou idade, de forma crescente ou decrescente |
-| RF0004  | Inserir um novo usuário na base de dados (arquivo JSON) |
-| RF0005  | Atualizar os dados de um usuário pelo ID |
-| RF0006  | Remover um usuário pelo ID |
-| RF0007  | Salvar e manter persistência dos usuários em arquivo JSON |
+| ID     | Descrição                                                                |
+| ------ | ------------------------------------------------------------------------ |
+| RF0001 | Gerar usuários fictícios com nome, idade, endereço e e-mail              |
+| RF0002 | Listar os usuários em uma interface web com paginação                    |
+| RF0003 | Ordenar os usuários por nome ou idade, de forma crescente ou decrescente |
+| RF0004 | Inserir um novo usuário na base de dados (arquivo JSON)                  |
+| RF0005 | Atualizar os dados de um usuário pelo ID                                 |
+| RF0006 | Remover um usuário pelo ID                                               |
+| RF0007 | Salvar e manter persistência dos usuários em arquivo JSON                |
 
 ---
 
 ## 📘 Acesso ao Tutorial
 
-Você pode acessar o tutorial completo no arquivo:  
+Você pode acessar um tutorial completo sobre estra aplicação de exemplo através deste link:
 👉 [`tutorial.md`](./public/tutorial.md)
 
 ---
@@ -47,10 +47,11 @@ Você pode acessar o tutorial completo no arquivo:
 | RF0001 | Gerar usuários fictícios com nome, idade, endereço e e-mail              | ☑️           |
 | RF0002 | Listar os usuários em uma interface web com paginação                    | ☑️           |
 | RF0003 | Ordenar os usuários por nome ou idade, de forma crescente ou decrescente | ☑️           |
-| RF0004 | Inserir um novo usuário na base de dados (arquivo JSON)                  | ⬜            |
-| RF0005 | Atualizar os dados de um usuário pelo ID                                 | ⬜            |
-| RF0006 | Remover um usuário pelo ID                                               | ⬜            |
-| RF0007 | Salvar e manter persistência dos usuários em arquivo JSON                | ⬜            |
+| RF0004 | Inserir um novo usuário na base de dados (arquivo JSON)                  | ☑️           |
+| RF0005 | Atualizar os dados de um usuário (pelo ID)                               | ⬜           |
+| RF0006 | Remover um usuário do sistema (pelo ID\_                                 | ⬜           |
+| RNF001 | Salvar e manter persistência dos usuários em arquivo JSON                | ⬜           |
+| RNF002 | Paginar os usuários usando API (/list-users/:count?)                     | ⬜           |
 
 ---
 
@@ -67,6 +68,18 @@ Você pode acessar o tutorial completo no arquivo:
 ---
 
 ## 🛠️ Como Baixar e Executar a Aplicação
+
+### ⚠️ IMPORTANTE: Criando um arquivo com _1.000.000 de usuários \_fake_
+
+Para que você possa usar corretamente este projeto é preciso criar o arquivo `usuarios.json`. Este arquivo é gerado através do programa `gerar_usuarios_fake.js`. Usando o seu terminal, vá na pasta do projeto e execute o seguinte comando:
+
+```javascript
+node gerar_usuarios_fake.js
+```
+
+O funcionamento da funcionalidade de geração dos usuários _fake_ se eoncontra no arquivo `criando-json-usuarios.md`, que pode ser acessado através deste link: [acesso à explicação]("./criando-json-usuarios.md").
+
+---
 
 ### 1. Clone o repositório
 
@@ -88,15 +101,6 @@ npm start
 ```
 
 A aplicação estará disponível em: `http://localhost:3000`
-
-### 4. Criando um arquivo com 1000_000 de usuários _fake_
-
-Esta aplicação faz uso do arquivo `usuarios.json`que contém as informações de um milhão de usuários. No caso, foi usada a biblioteca *fake-js* para gerar estas informações. O código de geração dos susuários _fake_ se encontra no arquivo `gerar_usuarios.js`, presente nesse projeto.
-
-O funcionamento da funcionalidade de geração dos usuários _fake_ se eoncontra no arquivo `criando-json-usuarios.md`, que pode ser acessado através deste link: [acesso à explicação]("./criando-json-usuarios.md").
-
----
-
 
 ---
 

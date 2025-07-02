@@ -1,26 +1,41 @@
 # 📘 Tutorial: Construindo uma Aplicação Web para Listagem e Ordenação de Usuários com Node.js
 
-Este tutorial apresenta os principais conceitos utilizados no desenvolvimento de uma aplicação web baseada em Node.js e JavaScript para geração, listagem, ordenação e paginação de usuários fictícios. Este material é parte das aulas da disciplina Autoração Multimídia 2 do curso de Bacharelado em Sistemas e Mídias Digitais da Universidade Federal do Ceará, ministrada pelo Prof. Wellington W. F. Sarmento.
+Este tutorial apresenta os principais conceitos utilizados no desenvolvimento de uma aplicação web baseada em Node.js e JavaScript para geração, listagem, ordenação e paginação de usuários fictícios. Este material é parte das aulas da disciplina Autoração Multimídia 2 do curso de Bacharelado em Sistemas e Mídias Digitais da Universidade Federal do Ceará, ministrada pelo Prof. Wellington W. F. Sarmento e formatado com a ajuda do chatGPT (4.1)
 
 ---
 
 ## 📌 Conceitos Abordados
 
-✅ Normalização de Strings
+### ✅ Normalização de Strings
 
 A normalização é usada para remover acentos e padronizar letras para facilitar comparações.
 
 Código:
 
 ```js
-const sa = a.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+const sa = a
+  .normalize("NFD")
+  .replace(/\p{Diacritic}/gu, "")
+  .toLowerCase();
 ```
 
 - "NFD" separa letras de acentos.
 - A expressão /\p{Diacritic}/gu remove os acentos.
 - toLowerCase() evita diferenças entre maiúsculas/minúsculas.
 
-## ✅ Expressões Regulares
+#### Explicando melhor
+
+Normalizar string serve pra comparar “José” com “JOSE” e saber que é tudo igual. O método `.normalize("NFD")` separa acentos das letras, a regex remove os acentos, e `.toLowerCase()` deixa tudo em minúsculo.
+
+**Exemplo**
+“Érica” → normalize → “Érica” (o “É” vira “E” + acento separado)
+Depois da regex → “Erica”
+Depois do `.toLowerCase()` → “erica”
+Pronto, dá pra comparar na paz!
+
+---
+
+### ✅ Expressões Regulares
 
 Expressões regulares são usadas para identificar padrões de texto.
 
@@ -32,9 +47,23 @@ Código:
 
 Remove todos os diacríticos (acentos) de uma string.
 
+#### Explicando melhor
+
+Expressões regulares, ou **regex**, são basicamente um “buscador universal” de padrões no texto.
+
+O código `/\p{Diacritic}/gu` faz o seguinte:
+
+- O `\p{Diacritic}` seleciona qualquer símbolo que seja um acento (diacrítico).
+- `g` é pra fazer isso na string toda, e `u` pra funcionar certinho com Unicode (ou seja, com caracteres “estranhos” também).
+
+**Exemplos**
+
+- `"ação".replace(/\p{Diacritic}/gu, "")` → `"acao"`
+- `"Maçã".replace(/\p{Diacritic}/gu, "")` → `"Maca"`
+
 ---
 
-## 🌐 API RESTful
+### 🌐 API RESTful
 
 A aplicação possui uma API REST que responde à rota:
 
@@ -42,7 +71,7 @@ A aplicação possui uma API REST que responde à rota:
 GET /list-users/:count?
 ```
 
-- :count é um parâmetro opcional que define quantos usuários retornar.
+- \:count é um parâmetro opcional que define quantos usuários retornar.
 - O arquivo usuarios.json é lido com essa quantidade e retornado como JSON.
 
 Código (server.js):
@@ -55,83 +84,119 @@ app.get('/list-users/:count?', (req, res) => {
 });
 ```
 
+#### Explicando melhor
+
+**API RESTful**
+REST é um conjunto de regras (um “jeito padrão”) de criar APIs que funcionam por requisições HTTP (GET, POST, etc).
+Uma API RESTful geralmente usa URLs amigáveis, sempre retorna (ou recebe) dados em JSON, e usa verbos HTTP certinho.
+
+No exemplo, temos um endpoint que retorna uma lista de usuários conforme a quantidade pedida.
+
+**Endpoint**
+É o endereço (rota + método HTTP) de uma operação da sua API.
+Exemplo: `GET /list-users/100`
+Esse endpoint retorna os 100 primeiros usuários do arquivo `usuarios.json`.
+
 ---
 
-## 🔁 Passagem de Parâmetros no Endpoint
+### 🔁 Passagem de Parâmetros no Endpoint
 
-Usamos /:param para capturar valores diretamente da URL.
+Usamos /\:param para capturar valores diretamente da URL.
 
-Exemplo:
+**Exemplo**
 
 ```bash
 GET http://localhost:3000/list-users/200
 ```
 
-O valor 200 será capturado como req.params.count.
+O valor _200_ é capturado e atribuído à variável `req.params.count`.
+
+#### Explicando melhor
+
+O `/:count` lá na rota faz com que tudo que vier depois de `/list-users/` seja capturado automaticamente.
+
+- Se você acessar `/list-users/99`, `req.params.count` será `"99"`.
+- Você pode ter quantos parâmetros quiser (ex: `/api/user/:id/:acao`).
+- O sinal de interrogação (`?`) indica que o parâmetro é opcional: se não mandar nada, o valor será `undefined` e seu código pode colocar um padrão (no seu backend tem um if que faz isso).
 
 ---
 
-## 🧪 Biblioteca @faker-js/faker
-
-Usada para gerar dados fictícios como nomes, endereços e e-mails.
-
-Código (gerar_usuarios_fake.js):
-
-```js
-const { faker } = require('@faker-js/faker');
-faker.person.fullName()
-faker.internet.email()
-faker.location.streetAddress()
-```
-
----
-
-## 🌐 Uso do fetch()
+### 🌐 Uso do fetch()
 
 O fetch() é uma função assíncrona usada para fazer requisições HTTP.
 
 Código:
 
 ```js
-const resposta = await fetch('http://localhost:3000/list-users/200');
+const resposta = await fetch("http://localhost:3000/list-users/200");
 usuarios = await resposta.json();
 ```
 
 Se tentarmos usar fetch() sem await ou sem then, o código não espera a resposta e pode falhar.
 
-🧨 Exemplo com erro:
+🧨 **Exemplo com erro**
 
 ```js
-const resposta = fetch('http://localhost:3000/list-users/200');
+const resposta = fetch("http://localhost:3000/list-users/200");
 console.log(resposta.json()); // ❌ Erro: resposta ainda não chegou
 ```
 
+#### Explicando melhor
+
+O `fetch()` faz uma requisição HTTP usando JavaScript no browser. Por padrão, ele retorna uma Promise — ou seja, “promete” que um dado vai chegar… mas não chega na hora.
+
+Como usar direito:
+
+- Com `await` (dentro de uma função async), o JS espera a resposta antes de continuar.
+- Sem `await`, você recebe uma Promise, que é tipo aquele colega que diz “pode deixar que eu entrego”... mas não entrega nunca se você não cobrar.
+
+Resumindo:
+Sempre use `await fetch()` ou `.then()` para garantir que os dados chegaram.
+
 ---
 
-## ✅ Assíncrono com async/await
+### ✅ Assíncrono com async/await
 
 A solução correta é usar async/await:
 
 ```js
 async function carregarUsuarios() {
-  const resposta = await fetch('http://localhost:3000/list-users/200');
+  const resposta = await fetch("http://localhost:3000/list-users/200");
   const usuarios = await resposta.json();
 }
 ```
 
+#### Explicando melhor
+
+- `async function ...` transforma sua função em “assíncrona”, permitindo usar `await` lá dentro.
+- `await` pausa a execução até a Promise ser resolvida (os dados chegam), e só então segue para a próxima linha.
+- Assim você evita aquele festival de `.then().then()` (callback hell).
+
 ---
 
-## 🔄 8. Função de Ordenação e Comparação
+### 🔄 8. Função de Ordenação e Comparação
 
-### Função de Comparação de Strings
+#### Função de Comparação de Strings
 
 ```js
 function comparaStrings(a, b, fullCompare = true) {
   const sa = a.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
   const sb = b.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
-  ...
+  .
+  .
+  .
 }
 ```
+
+Permite ordenar por campos como nome (String) ou idade (Number).
+
+#### Explicando melhor
+
+Aqui, normaliza as duas strings e compara caractere a caractere, podendo comparar só os 3 primeiros (tipo "ordem de telefone"!), ou tudo.
+
+A função retorna -1, 0 ou 1, igual ao método `.sort()` do JS.
+
+---
 
 ## Bubble Sort Adaptado
 
@@ -143,46 +208,45 @@ function bubbleSort(arr, key, crescente = true) {
 
 Permite ordenar por campos como nome (string) ou idade (número).
 
-
+---
 
 ### Passo a passo do algoritmo
 
-*Vetor inicial:* `["bba", "abc", "bac", "bca", "aaa"]`
+_Vetor inicial:_ `["bba", "abc", "bac", "bca", "aaa"]`
 
-*🔄 Primeira passada (i = 0)*
+_🔄 Primeira passada (i = 0)_
 `compara(bba, abc) → "bba" > "abc" → troca`
-→ ["abc", "bba", "bac", "bca", "aaa"]
+→ \["abc", "bba", "bac", "bca", "aaa"]
 
 `compara(bba, bac) → "bba" > "bac" → troca`
-→ ["abc", "bac", "bba", "bca", "aaa"]
+→ \["abc", "bac", "bba", "bca", "aaa"]
 
 `compara(bba, bca) → "bba" < "bca" → não troca`
 
 `compara(bca, aaa) → "bca" > "aaa" → troca`
-→ ["abc", "bac", "bba", "aaa", "bca"]
+→ \["abc", "bac", "bba", "aaa", "bca"]
 
-*🔄 Segunda passada (i = 1)*
+_🔄 Segunda passada (i = 1)_
 `compara(abc, bac) → "abc" < "bac" → não troca`
 
 `compara(bac, bba) → "bac" < "bba" → não troca`
 
 `compara(bba, aaa) → "bba" > "aaa" → troca`
-→ ["abc", "bac", "aaa", "bba", "bca"]
+→ \["abc", "bac", "aaa", "bba", "bca"]
 
-*🔄 Terceira passada (i = 2)*
+_🔄 Terceira passada (i = 2)_
 `compara(bac, aaa) → "bac" > "aaa" → troca`
-→ ["abc", "aaa", "bac", "bba", "bca"]
+→ \["abc", "aaa", "bac", "bba", "bca"]
 
-*🔄 Quarta passada (i = 3)*
+_🔄 Quarta passada (i = 3)_
 `compara(abc, aaa) → "abc" > "aaa" → troca`
-→ ["aaa", "abc", "bac", "bba", "bca"]
+→ \["aaa", "abc", "bac", "bba", "bca"]
 
 ---
 
 ## Função de Comparação de strings
 
 ### Compara os três primeiros caracteres de duas strings.
-
 
 ```Javascript
 function compara3Primeiros(str1, str2) {
@@ -199,10 +263,9 @@ function compara3Primeiros(str1, str2) {
 
   return 0;
 }
-
 ```
 
-*🚀 Objetivo*
+🚀 **Objetivo**
 Criar uma função chamada compara3Primeiros(str1, str2) que:
 
 Compara os três primeiros caracteres de duas strings.
@@ -210,34 +273,26 @@ Compara os três primeiros caracteres de duas strings.
 Retorna:
 
 -1 se str1 < str2
-
 1 se str1 > str2
-
 0 se forem iguais
 
-*🧠 Lógica*
+🧠 **Lógica**
 Pegamos os três primeiros caracteres com slice(0, 3) (ou menos se a string for menor que isso).
 
 Comparamos letra a letra (como no dicionário).
 
 Se empatar tudo, retorna 0.
 
-*O que tá rolando aqui: `str1.charCodeAt(i):`?*
-
+_O que tá rolando aqui: `str1.charCodeAt(i):`?_
 Pega o código numérico Unicode do caractere na posição i da string 1.
-
 Ex: "a".charCodeAt(0) → 97, "b".charCodeAt(0) → 98
 
-|| 0:
-
+`|| 0`:
 Caso a string tenha menos de 3 caracteres, charCodeAt(i) pode retornar NaN.
-
-|| 0 evita erro e força a comparar com 0, que representa o "vazio".
+`|| 0` evita erro e força a comparar com 0, que representa o "vazio".
 
 O `for`:
-
 Compara o caractere na posição 0, depois 1, depois 2.
-
 Assim, a gente faz uma ordem lexicográfica, tipo dicionário.
 
 _As três primeiras letras_
@@ -255,7 +310,9 @@ _Comparação_
 
 Portanto: "bat" vem depois de "ban".
 
-### Compara as strings complestas
+---
+
+### Compara as strings completas
 
 ```Javascript
 function comparaStrings(str1, str2) {
@@ -277,174 +334,76 @@ function comparaStrings(str1, str2) {
 }
 ```
 
-## Código `script.js` comentado
-
 ---
 
-```javascript
-// Array global que armazenará os usuários recebidos do backend
-let usuarios = [];
+## 📑 Paginação dos Dados
 
-// Variável que indica a página atual exibida na tabela
-let paginaAtual = 1;
+### Explicando melhor
 
-// Número de usuários a serem mostrados por página
-const usuariosPorPagina = 20;
+A paginação é o truque de dividir a lista gigante de usuários em "fatias" menores para exibir só um pedaço por vez, melhorando a performance e a experiência do usuário.
 
-// Objeto que armazena o campo usado para ordenação e a direção (crescente ou decrescente)
-let ordemAtual = { campo: 'nome', crescente: true };
-```
+#### Como funciona no seu sistema
 
----
+a) **Variáveis de controle:**
 
-### 🔁 Função assíncrona para carregar os usuários da API
+- `let paginaAtual = 1;` – Página sendo exibida.
+- `const usuariosPorPagina = 20;` – Quantos usuários aparecem por página.
 
-```javascript
-async function carregarUsuarios() {
-  // Requisição HTTP para a rota da API que retorna 200 usuários
-  const resposta = await fetch('http://localhost:3000/list-users/200');
-  
-  // Conversão da resposta para JSON e armazenamento no array global
-  usuarios = await resposta.json();
+b) **Função de Paginação:**
 
-  // Atualiza a exibição da tabela com os dados recebidos
-  atualizarPaginacao();
-}
-```
+- A função `atualizarPaginacao()` calcula quantas páginas são necessárias, baseado na quantidade total de usuários e quantos aparecem por página:
 
----
+  ```js
+  const totalPaginas = Math.ceil(usuarios.length / usuariosPorPagina);
+  ```
 
-### 🔤 Função para comparar duas strings (com ou sem todos os caracteres)
+- Garante que o número da página não ultrapasse os limites válidos:
 
-```javascript
-function comparaStrings(a, b, fullCompare = true) {
-  // Normaliza e remove acentos/diacríticos, além de converter para minúsculas
-  const sa = a.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
-  const sb = b.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
-
-  // Define o número de caracteres a serem comparados (todos ou apenas os 3 primeiros)
-  const len = fullCompare ? Math.max(sa.length, sb.length) : 3;
-
-  // Compara caractere a caractere pelo código Unicode
-  for (let i = 0; i < len; i++) {
-    const c1 = sa.charCodeAt(i) || 0; // Usa 0 caso o caractere não exista
-    const c2 = sb.charCodeAt(i) || 0;
-    if (c1 < c2) return -1;
-    if (c1 > c2) return 1;
-  }
-
-  // Strings equivalentes nos caracteres analisados
-  return 0;
-}
-```
-
----
-
-### 📊 Algoritmo Bubble Sort adaptado para strings e números
-
-```javascript
-function bubbleSort(arr, key, crescente = true) {
-  const tipo = typeof arr[0][key]; // Identifica o tipo do campo de ordenação (string ou number)
-  const n = arr.length;
-
-  // Duplo loop do Bubble Sort
-  for (let i = 0; i < n - 1; i++) {
-    for (let j = 0; j < n - 1 - i; j++) {
-      let a = arr[j][key];
-      let b = arr[j + 1][key];
-
-      // Se for string, usa a função de comparação personalizada. Se for número, usa subtração.
-      let comp = tipo === "string" ? comparaStrings(a, b) : a - b;
-
-      // Troca os elementos se estiverem fora da ordem desejada
-      if ((crescente && comp > 0) || (!crescente && comp < 0)) {
-        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-      }
-    }
-  }
-}
-```
-
----
-
-### 🔀 Função que lida com cliques para ordenar a tabela
-
-```javascript
-function ordenarTabela(campo) {
-  // Se clicar no mesmo campo, inverte a ordem; caso contrário, inicia ordenação crescente
-  ordemAtual = (ordemAtual.campo === campo)
-    ? { campo, crescente: !ordemAtual.crescente }
-    : { campo, crescente: true };
-
-  // Ordena os usuários usando Bubble Sort
-  bubbleSort(usuarios, ordemAtual.campo, ordemAtual.crescente);
-
-  // Atualiza a visualização com os dados ordenados
-  atualizarPaginacao();
-}
-```
-
----
-
-### 📑 Atualiza os dados da tabela com base na página selecionada
-
-```javascript
-function atualizarPaginacao() {
-  const totalPaginas = Math.ceil(usuarios.length / usuariosPorPagina); // Total de páginas
-
-  // Garante que o número da página atual esteja dentro do intervalo permitido
+  ```js
   paginaAtual = Math.max(1, Math.min(paginaAtual, totalPaginas));
+  ```
 
-  // Atualiza o número da página e o total na interface
-  document.getElementById('paginaAtual').innerText = paginaAtual;
-  document.getElementById('totalPaginas').innerText = totalPaginas;
+  As funções `NMath.max()`e `Math.min()`retornam o maior e o menor valor dos parâmetros passados, respectivamente.
 
-  // Calcula o intervalo de usuários a serem exibidos na página atual
+c) **Cálculo dos índices:**
+
+- O início e fim da fatia exibida:
+
+  ```js
   const inicio = (paginaAtual - 1) * usuariosPorPagina;
   const fim = inicio + usuariosPorPagina;
+  ```
 
-  // Exibe os usuários da página atual
+  **Exemplo**
+
+  - Se paginaAtual = -3 => resultado: 1
+  - Se paginaAtual = 99 e totalPaginas = 10 => resultado: 10
+  - Se paginaAtual = 5 e totalPaginas = 10 => resultado: 5 (dentro do normal)
+
+d) **Renderização:**
+
+- Só os usuários daquela fatia são exibidos:
+
+  ```js
   renderizarTabela(usuarios.slice(inicio, fim));
-}
-```
+  ```
+
+- Exemplo: **página 2**, **início = 20**, **fim = 40 (usuários de 21 a 40)**.
+
+e) **Botões de navegação:**
+
+- Chamam `paginaAnterior()` e `proximaPagina()` para trocar de página, sempre atualizando a visualização.
+- Os botões mudam a variável `paginaAtual` e chamam `atualizarPaginacao()` de novo.
+
+f) **Interface:**
+
+- O número da página e o total aparecem na tela para o usuário:
+  `Página 2 de 10`
 
 ---
 
-### ⬅️➡️ Controle de mudança de página
+## Código `script.js` comentado
 
-```javascript
-function paginaAnterior() {
-  paginaAtual--; // Volta uma página
-  atualizarPaginacao();
-}
+O código completo do Javascript usado `index.html` deste projeto está aqui:
 
-function proximaPagina() {
-  paginaAtual++; // Avança uma página
-  atualizarPaginacao();
-}
-```
-
----
-
-### 🖥️ Renderiza os dados da tabela HTML
-
-```javascript
-function renderizarTabela(data) {
-  const tbody = document.querySelector("#tabelaUsuarios tbody"); // Obtém o corpo da tabela
-  tbody.innerHTML = ""; // Limpa conteúdo atual
-
-  // Insere os dados linha por linha
-  data.forEach(u => {
-    tbody.innerHTML += `<tr><td>${u.nome}</td><td>${u.idade}</td><td>${u.endereco}</td><td>${u.email}</td></tr>`;
-  });
-}
-```
-
----
-
-### 🚀 Inicialização ao carregar a página
-
-```javascript
-window.onload = carregarUsuarios; // Quando a página carrega, busca os usuários da API
-```
----
+[script.js](/script.js)
