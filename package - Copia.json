@@ -4,9 +4,9 @@
   "description": "Aplicação para fins didáticos explicando como fazer um crud de usuários usando o node.js, express e JSON.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node --env-file=.env server.js",
     "crud": "node crud_usuarios.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon --env-file=.env server.js"
   },
   "keywords": [
     "usuarios",
