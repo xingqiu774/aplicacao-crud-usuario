@@ -6,7 +6,7 @@ Este projeto é uma aplicação web simples para cadastro, listagem, atualizaç�
 **Armazenamento em NDJSON** (um JSON por linha)
 **Frontend estilizado** com HTML, CSS e JavaScript puro
 
-Este projeto foi feito como um fork do projeto do professor da disciplina.
+Este projeto foi feito como um fork do projeto do professor(**Wellington**) da disciplina.
 O time é composto por **Lucas Thagno de Souza Ferreira** e só.
 
 
@@ -17,29 +17,28 @@ O time é composto por **Lucas Thagno de Souza Ferreira** e só.
 
 ### Cadastro de Usuário
 
-- Abertura via **modal estilizado** (não usa alert/prompt)
-- Validação de campos no servidor
-- Prevenção contra **palavras-chave SQL** e símbolos maliciosos
-- Feedback visual de sucesso
+- Abertura via **modal estilizado**.
+- Validação de campos no servidor.
+- Prevenção contra **palavras-chave SQL** e símbolos maliciosos.
 
 ### Listagem de Usuários
 
-- Tabela com cabeçalho ordenável
-- Estilo moderno, responsivo e leve
+- Tabela com cabeçalho ordenável.
+- Estilo moderno, responsivo e leve.
 
 ### Atualização de Usuários
 
-- Botão "Alterar" abre um **formulário em modal** preenchido automaticamente
-- Permite editar todos os campos com validação
+- Botão "Alterar" abre um **formulário em modal** preenchido automaticamente.
+- Permite editar todos os campos com validação.
 
 ### Remoção de Usuários
 
-- Ação "Remover" abre **modal de confirmação visual**, evitando popups nativos
-- Atualiza a tabela ao concluir
+- Ação "Remover" abre **modal de confirmação visual**, evitando popups nativos.
+- Atualiza a tabela ao concluir.
 
 ---
 
-## 📚 Validação de Dados (lado servidor)
+## 📚 Validação de Dados
 
 Todos os campos textuais passam por:
 
