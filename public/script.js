@@ -126,13 +126,15 @@ function renderizarTabela(data) {
 
   // Insere uma linha HTML para cada usuário no array recebido
   data.forEach((u) => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${u.nome}</td>
-        <td>${u.idade}</td>
-        <td>${u.endereco}</td>
-        <td>${u.email}</td>
-      </tr>`;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${u.nome}</td>
+      <td>${u.idade}</td>
+      <td>${u.endereco}</td>
+      <td>${u.email}</td>
+      ${window.adicionarBotaoAcao ? window.adicionarBotaoAcao(u) : ""}
+    `;
+    tbody.appendChild(tr);
   });
   // Existe esta outra forma de iterar os elementos desse vetor de objetos:
   //  for(u of data){
@@ -144,6 +146,79 @@ function renderizarTabela(data) {
   //         <td>${u.email}</td>
   //       </tr>`;
   // }
+}
+
+async function editarUsuario(id) {
+  const usuario = usuarios.find((u) => u.id === id);
+  if (!usuario) return;
+
+  const novoNome = prompt("Novo nome:", usuario.nome);
+  const novaIdade = prompt("Nova idade:", usuario.idade);
+  const novoEndereco = prompt("Novo endereço:", usuario.endereco);
+  const novoEmail = prompt("Novo email:", usuario.email);
+
+  if (
+    novoNome === null &&
+    novaIdade === null &&
+    novoEndereco === null &&
+    novoEmail === null
+  ) {
+    return;
+  }
+
+  const dadosAtualizados = {};
+  if (novoNome !== null) dadosAtualizados.nome = novoNome;
+  if (novaIdade !== null) dadosAtualizados.idade = parseInt(novaIdade);
+  if (novoEndereco !== null) dadosAtualizados.endereco = novoEndereco;
+  if (novoEmail !== null) dadosAtualizados.email = novoEmail;
+
+  try {
+    const resposta = await fetch(`/atualizar-usuario/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dadosAtualizados),
+    });
+
+    const resultado = await resposta.json();
+    if (resultado.ok) {
+      alert("Usuário atualizado com sucesso!");
+      carregarUsuarios(0);
+    } else {
+      alert(
+        "Erro ao atualizar usuário: " + (resultado.error || "Erro desconhecido")
+      );
+    }
+  } catch (erro) {
+    console.error("Erro:", erro);
+    alert("Erro ao conectar com o servidor");
+  }
+}
+
+async function removerUsuario(id) {
+  if (!confirm("Tem certeza que deseja remover este usuário?")) {
+    return;
+  }
+
+  try {
+    const resposta = await fetch(`/remover-usuario/${id}`, {
+      method: "DELETE",
+    });
+
+    const resultado = await resposta.json();
+    if (resultado.ok) {
+      alert("Usuário removido com sucesso!");
+      carregarUsuarios(0);
+    } else {
+      alert(
+        "Erro ao remover usuário: " + (resultado.error || "Erro desconhecido")
+      );
+    }
+  } catch (erro) {
+    console.error("Erro:", erro);
+    alert("Erro ao conectar com o servidor");
+  }
 }
 
 // Quando a página for carregada, executa a função que busca os usuários

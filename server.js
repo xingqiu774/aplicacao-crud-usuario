@@ -17,13 +17,8 @@ const HOST = process.env.HOST || "localhost"; //http://10.102.225.17:3000
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json()); //ativa parser JSON para este projeto
-
-// Configura o Express para servir arquivos estáticos da pasta "public"
-// Isso permite acessar arquivos como index.html diretamente
-app.use(express.static(path.join(__dirname, "public")));
-
-// Ativa o CORS para permitir chamadas HTTP de outras origens (por exemplo, frontend em outro servidor)
 app.use(cors());
+
 
 /**
  * Função que lê o arquivo usuarios.json e retorna até 'qtd' usuários
@@ -98,6 +93,74 @@ app.get("/list-users/:count?", (req, res) => {
   // Envia os usuários lidos como resposta JSON
   res.json(lerUsuarios(num));
 });
+
+
+app.put("/atualizar-usuario/:id", (req, res) => {
+  try {
+    const usuarioIndex = usuarios.findIndex((u) => u.id === req.params.id);
+
+    if (usuarioIndex === -1) {
+      return res.status(404).json({ error: "Usuário não encontrado." });
+    }
+
+    // Atualiza apenas os campos fornecidos
+    if (req.body.nome) usuarios[usuarioIndex].nome = req.body.nome;
+    if (req.body.idade) usuarios[usuarioIndex].idade = req.body.idade;
+    if (req.body.endereco) usuarios[usuarioIndex].endereco = req.body.endereco;
+    if (req.body.email) usuarios[usuarioIndex].email = req.body.email;
+
+    salvarUsuarios(usuarios);
+    console.log(
+      `✔️ Usuário atualizado: ${JSON.stringify(usuarios[usuarioIndex])}`
+    );
+    res.json({
+      ok: true,
+      message: "Usuário atualizado com sucesso!",
+      usuario: usuarios[usuarioIndex],
+    });
+  } catch (err) {
+    console.error("❌ Erro ao atualizar usuário:", err);
+    res.status(500).json({ error: "Não foi possível atualizar usuário." });
+  }
+});
+
+app.delete("/remover-usuario/:id", (req, res) => {
+  try {
+    const usuarioIndex = usuarios.findIndex((u) => u.id === req.params.id);
+
+    if (usuarioIndex === -1) {
+      return res.status(404).json({ error: "Usuário não encontrado." });
+    }
+
+    const usuarioRemovido = usuarios[usuarioIndex];
+    usuarios.splice(usuarioIndex, 1); // Remove direto do array global
+
+    salvarUsuarios(usuarios);
+    console.log(`✔️ Usuário removido: ${JSON.stringify(usuarioRemovido)}`);
+    res.json({
+      ok: true,
+      message: "Usuário removido com sucesso!",
+      usuario: usuarioRemovido,
+    });
+  } catch (err) {
+    console.error("❌ Erro ao remover usuário:", err);
+    res.status(500).json({ error: "Não foi possível remover usuário." });
+  }
+});
+
+
+
+
+
+// Configura o Express para servir arquivos estáticos da pasta "public"
+// Isso permite acessar arquivos como index.html diretamente
+app.use(express.static(path.join(__dirname, "public")));
+
+// Ativa o CORS para permitir chamadas HTTP de outras origens (por exemplo, frontend em outro servidor)
+
+
+
+
 
 // Inicia o servidor e exibe a URL no console
 app.listen(PORT, HOST, () => {
