@@ -6,21 +6,20 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>🗑️ Remover Usuários</h1>
-    <menu>
-      <a href="index.html">Voltar para Lista</a>
-      <a href="cadastra_usuario.html" rel="noopener noreferrer"
-        >Cadastrar Usuário</a
-      >
-      <a href="update_user.html" rel="noopener noreferrer"
-        >Update Usuário</a
-      >
-    </menu>
+    <header>
+      <h1>🗑 Remover Usuários</h1>
+      <nav class="menu-topo">
+        <a href="index.html">🏠 Início</a>
+        <a href="cadastra_usuario.html">➕ Cadastrar</a>
+        <a href="update_user.html">✏️ Atualizar</a>
+      </nav>
+    </header>
+
     <table id="tabelaUsuarios">
       <thead>
         <tr>
-          <th onclick="ordenarTabela('nome')">Nome ⬍</th>
-          <th onclick="ordenarTabela('idade')">Idade ⬍</th>
+          <th>Nome</th>
+          <th>Idade</th>
           <th>Endereço</th>
           <th>Email</th>
           <th>Ação</th>
@@ -33,6 +32,19 @@
       <button onclick="paginaAnterior()">⬅ Anterior</button>
       Página <span id="paginaAtual">1</span> de <span id="totalPaginas">1</span>
       <button onclick="proximaPagina()">Próxima ➡</button>
+    </div>
+
+    <!-- Modal de confirmação de remoção -->
+    <div id="modal-remover" class="modal">
+      <div class="modal-conteudo">
+        <h2>Confirmar remoção</h2>
+        <p>Tem certeza que deseja remover este usuário?</p>
+        <input type="hidden" id="id-remover" />
+        <div class="modal-botoes">
+          <button onclick="confirmarRemocao()">Sim, remover</button>
+          <button onclick="fecharModalRemocao()" class="btn-cancelar">Cancelar</button>
+        </div>
+      </div>
     </div>
 
     <script src="script.js"></script>

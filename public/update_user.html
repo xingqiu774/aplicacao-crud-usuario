@@ -6,16 +6,15 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>✏️ Alterar Dados de Usuários</h1>
-    <menu>
-      <a href="index.html">Voltar para Lista</a>
-      <a href="cadastra_usuario.html" rel="noopener noreferrer"
-        >Cadastrar Usuário</a
-      >
-      <a href="remove_user.html" rel="noopener noreferrer"
-        >Remover Usuário</a
-      >
-    </menu>
+    <header>
+      <h1>✏️ Alterar Dados de Usuários</h1>
+      <nav class="menu-topo">
+        <a href="index.html">🏠 Início</a>
+        <a href="cadastra_usuario.html">➕ Cadastrar</a>
+        <a href="remove_user.html">🗑 Remover</a>
+      </nav>
+    </header>
+
     <table id="tabelaUsuarios">
       <thead>
         <tr>
@@ -33,6 +32,26 @@
       <button onclick="paginaAnterior()">⬅ Anterior</button>
       Página <span id="paginaAtual">1</span> de <span id="totalPaginas">1</span>
       <button onclick="proximaPagina()">Próxima ➡</button>
+    </div>
+
+    <!-- Modal de edição -->
+    <div id="modal-edicao" class="modal">
+      <div class="modal-conteudo">
+        <h2>Editar Usuário</h2>
+        <input type="hidden" id="modal-id" />
+        <label>Nome:</label>
+        <input type="text" id="modal-nome" />
+        <label>Idade:</label>
+        <input type="number" id="modal-idade" />
+        <label>Endereço:</label>
+        <input type="text" id="modal-endereco" />
+        <label>Email:</label>
+        <input type="email" id="modal-email" />
+        <div class="modal-botoes">
+          <button onclick="submeterEdicao()">Salvar</button>
+          <button onclick="fecharModal()" class="btn-cancelar">Cancelar</button>
+        </div>
+      </div>
     </div>
 
     <script src="script.js"></script>

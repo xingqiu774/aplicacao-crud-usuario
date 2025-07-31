@@ -3,67 +3,86 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cadastra Usuários</title>
+    <title>Cadastrar Usuários</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Cadastra Usuários</h1>
-    <form id="formulario">
-      <!-- Campos do formulário -->
-      <input type="text" id="nome" placeholder="Nome" />
-      <input type="number" id="idade" placeholder="Idade" />
-      <input type="text" id="endereco" placeholder="Endereço" />
-      <input type="email" id="email" placeholder="Email" />
-      <button type="submit">Cadastrar</button>
-    </form>
-    <div id="mensagem"></div>
-    <div id="novoUsuario"></div>
-    <div class="navegacao_paginas">
-      <a href="index.html">Retornar ao Home</a>
+    <header>
+      <h1>➕ Cadastrar Usuário</h1>
+      <nav class="menu-topo">
+        <a href="index.html">🏠 Início</a>
+        <a href="update_user.html">✏️ Atualizar</a>
+        <a href="remove_user.html">🗑 Remover</a>
+      </nav>
+    </header>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <button class="btn-editar" onclick="abrirModalCadastro()">➕ Novo Usuário</button>
     </div>
+
+    <div id="modal-cadastro" class="modal">
+      <div class="modal-conteudo">
+        <h2>Novo Usuário</h2>
+        <form id="formulario" onsubmit="submeterCadastro(event)">
+          <label>Nome:</label>
+          <input type="text" id="nome" required />
+          <label>Idade:</label>
+          <input type="number" id="idade" required />
+          <label>Endereço:</label>
+          <input type="text" id="endereco" required />
+          <label>Email:</label>
+          <input type="email" id="email" required />
+          <div class="modal-botoes">
+            <button type="submit">Cadastrar</button>
+            <button type="button" class="btn-cancelar" onclick="fecharModalCadastro()">Cancelar</button>
+          </div>
+        </form>
+        <div id="mensagem" style="margin-top: 10px; color: green;"></div>
+        <div id="novoUsuario"></div>
+      </div>
+    </div>
+
     <script>
-      const formulario = document.getElementById("formulario");
-      formulario.addEventListener("submit", (event) => {
+      function abrirModalCadastro() {
+        document.getElementById("modal-cadastro").style.display = "block";
+      }
+      function fecharModalCadastro() {
+        document.getElementById("modal-cadastro").style.display = "none";
+      }
+      function submeterCadastro(event) {
         event.preventDefault();
         const nome = document.getElementById("nome").value;
         const idade = document.getElementById("idade").value;
         const endereco = document.getElementById("endereco").value;
         const email = document.getElementById("email").value;
+
         fetch("/cadastrar-usuario", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ nome, idade, endereco, email }), // Envia os dados do formulário como JSON
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nome, idade, endereco, email }),
         })
           .then((response) => response.json())
           .then((data) => {
             const mensagem = document.getElementById("mensagem");
             const novoUsuario = document.getElementById("novoUsuario");
-
             if (data.ok) {
-              mensagem.textContent = data.message;
+              mensagem.textContent = "Usuário cadastrado com sucesso.";
               novoUsuario.innerHTML = `
                 <p>Nome: ${data.usuario.nome}</p>
                 <p>Idade: ${data.usuario.idade}</p>
                 <p>Endereço: ${data.usuario.endereco}</p>
                 <p>E-mail: ${data.usuario.email}</p>
-                `;
+              `;
+              setTimeout(() => mensagem.textContent = "", 4000);
+              fecharModalCadastro();
             } else {
               mensagem.textContent = "Erro ao cadastrar usuário.";
             }
           })
-          // .then((data) => { // Processa a resposta da API
-          //     const mensagem = document.getElementById("mensagem");
-          //     if (data.ok) {
-          //       mensagem.textContent = "Usuário cadastrado com sucesso!";
-          //     } else {
-          //       mensagem.textContent = "Erro ao cadastrar usuário.";
-          //     }
-          //   })
           .catch((error) => {
             console.error("Erro:", error);
           });
-      });
+      }
     </script>
   </body>
 </html>

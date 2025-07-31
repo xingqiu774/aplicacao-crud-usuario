@@ -1,53 +1,121 @@
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 8px; border: 1px solid #ccc; }
-th { background: #f0f0f0; cursor: pointer; }
-.paginacao {
-    margin-top: 10px;
-    text-align: center;
-}
-.paginacao button {
-    margin: 0 5px;
-    padding: 5px 10px;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
 }
 
-.btn-editar,
-.btn-remover {
-  padding: 5px 10px;
+header {
+  background-color: #3f51b5;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.menu-topo {
+  margin-top: 10px;
+}
+
+.menu-topo a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.menu-topo a:hover {
+  text-decoration: underline;
+}
+
+table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+table th {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.btn-editar, .btn-cancelar, .btn-remover {
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
   border: none;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
 }
 
 .btn-editar {
-  background-color: #4caf50;
-  color: white;
-}
-
-.btn-editar:hover {
-  background-color: #45a049;
-}
-
-.btn-remover {
-  background-color: #f44336;
+  background-color: #2196f3;
   color: white;
 }
 
 .btn-remover:hover {
-  background-color: #d32f2f;
+  background-color: #d21919;
 }
 
-.filtro {
-  margin: 20px 0;
+.btn-remover {
+  background-color: #f32121;
+  color: white;
 }
 
-.filtro input {
-  padding: 8px;
-  margin-right: 10px;
+.btn-editar:hover {
+  background-color: #1976d2;
+}
+
+
+.btn-cancelar {
+  background-color: #e0e0e0;
+}
+
+.paginacao {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-conteudo {
+  background-color: white;
+  margin: 10% auto;
+  padding: 20px;
   width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
 }
 
-.filtro button {
-  padding: 8px 15px;
-  margin-right: 10px;
+.modal-conteudo input {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-botoes {
+  text-align: right;
+}
+
+.modal-botoes button {
+  margin-left: 10px;
 }
