@@ -1,4 +1,24 @@
-# 📚 Aplicação de Geração e Manipulação de Usuários Fictícios
+# 📚 Projeto de Autoração Multimidia 2
+
+Este projeto foi feito como um fork do projeto do professor da disciplina.
+O time é composto por **Lucas Thagno de Souza Ferreira** e só.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 📚 Aplicação de Geração e Manipulação de Usuários Fictícios
 
 Este projeto foi desenvolvido como parte da disciplina **Autoração Multimídia II** do curso de **Bacharelado em Sistemas e Mídias Digitais** da **Universidade Federal do Ceará (UFC)**.
 

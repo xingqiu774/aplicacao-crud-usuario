@@ -1,3 +1,4 @@
+// server.js com suporte a APPEND usando NDJSON e compatibilidade com UPDATE e DELETE
 // Importa os módulos necessários
 const express = require("express"); // Framework para criação de aplicações web
 const cors = require("cors"); // Middleware para permitir requisições entre domínios (Cross-Origin)
@@ -5,10 +6,7 @@ const path = require("path"); // Módulo para lidar com caminhos de arquivos de 
 const fs = require("fs"); // Módulo para manipulação de arquivos do sistema
 const { v4: uuidv4 } = require("uuid");
 
-console.log("My Random uuidv4: " + uuidv4());
-
-const ARQUIVO = "usuarios.json";
-
+const ARQUIVO = "usuarios.ndjson";
 // Inicializa o app Express
 const app = express();
 
@@ -19,50 +17,31 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json()); //ativa parser JSON para este projeto
 app.use(cors());
 
-
-/**
- * Função que lê o arquivo usuarios.json e retorna até 'qtd' usuários
- * Se houver erro na leitura, retorna um array vazio
- */
+// Função para ler os usuários do arquivo NDJSON
 function lerUsuarios(maxUsr = 0) {
   try {
-    const dados = fs.readFileSync("usuarios.json", "utf-8"); // Lê o conteúdo do arquivo
-    const usuarios = JSON.parse(dados); // Converte a string JSON em array de objetos
-    let someUsers = [];
-    if (maxUsr == 0 || maxUsr == NaN) {
-      maxUsr = usuarios.length;
-    }
-    for (let cont = 0; cont < maxUsr; cont += 1) {
-      someUsers[cont] = usuarios[cont];
-    }
-    return someUsers;
+    const linhas = fs.readFileSync(ARQUIVO, "utf-8").split("\n").filter(l => l.trim());
+    const usuarios = linhas.map(l => JSON.parse(l));
+    return maxUsr > 0 ? usuarios.slice(0, maxUsr) : usuarios;
   } catch (erro) {
-    // Em caso de erro (arquivo ausente ou malformado), exibe no console e retorna array vazio
-    console.error("Erro ao ler o arquivo usuarios.json:", erro);
+    console.error("Erro ao ler o arquivo:", erro);
     return [];
   }
 }
 
-let usuarios = lerUsuarios();
-/**
- * Salva o Array de usuários passado como argumento, para um arquivo JSON.
- *
- * Args:
- *   usuarios (Array): Array de Objetos.
- */
+// Função para sobrescrever o arquivo inteiro (usado em update/delete)
 function salvarUsuarios(usuarios) {
-  fs.writeFileSync(ARQUIVO, JSON.stringify(usuarios, null, 2), "utf8");
+  const linhas = usuarios.map(u => JSON.stringify(u)).join("\n") + "\n";
+  fs.writeFileSync(ARQUIVO, linhas, "utf-8");
 }
 
-// Rota principal ("/")
-// Envia o arquivo index.html que está na pasta "public"
+// Rota principal
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public") + "index.html");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// Cadastrar usuário (modo APPEND)
 app.post("/cadastrar-usuario", (req, res) => {
-  console.log(usuarios.length);
-
   const novoUsuario = {
     id: uuidv4(),
     nome: req.body.nome,
@@ -70,9 +49,7 @@ app.post("/cadastrar-usuario", (req, res) => {
     endereco: req.body.endereco,
     email: req.body.email,
   };
-  usuarios.push(novoUsuario);
-  salvarUsuarios(usuarios);
-  //res.status(200);
+  fs.appendFileSync(ARQUIVO, JSON.stringify(novoUsuario) + "\n", "utf-8");
   res.status(201).json({
     ok: true,
     message: "Usuário cadastrado com sucesso!",
@@ -80,89 +57,45 @@ app.post("/cadastrar-usuario", (req, res) => {
   });
 });
 
-// Rota "/list-users/:count?"
-// Retorna um JSON com até 'count' usuários do arquivo usuarios.json
+// Listar usuários
 app.get("/list-users/:count?", (req, res) => {
-  let num = parseInt(req.params.count); // Lê o parâmetro :count e converte para número
-
-  // Define valor padrão e limites de segurança
-  // if (isNaN(num)) num=100;
-  // if (num < 100) num = 100;
-  // if (num > 100_000) num = 100_000;
-  console.log(num);
-  // Envia os usuários lidos como resposta JSON
+  const num = parseInt(req.params.count);
   res.json(lerUsuarios(num));
 });
 
-
+// Atualizar usuário
 app.put("/atualizar-usuario/:id", (req, res) => {
-  try {
-    const usuarioIndex = usuarios.findIndex((u) => u.id === req.params.id);
-
-    if (usuarioIndex === -1) {
-      return res.status(404).json({ error: "Usuário não encontrado." });
-    }
-
-    // Atualiza apenas os campos fornecidos
-    if (req.body.nome) usuarios[usuarioIndex].nome = req.body.nome;
-    if (req.body.idade) usuarios[usuarioIndex].idade = req.body.idade;
-    if (req.body.endereco) usuarios[usuarioIndex].endereco = req.body.endereco;
-    if (req.body.email) usuarios[usuarioIndex].email = req.body.email;
-
-    salvarUsuarios(usuarios);
-    console.log(
-      `✔️ Usuário atualizado: ${JSON.stringify(usuarios[usuarioIndex])}`
-    );
-    res.json({
-      ok: true,
-      message: "Usuário atualizado com sucesso!",
-      usuario: usuarios[usuarioIndex],
-    });
-  } catch (err) {
-    console.error("❌ Erro ao atualizar usuário:", err);
-    res.status(500).json({ error: "Não foi possível atualizar usuário." });
+  let usuarios = lerUsuarios();
+  const idx = usuarios.findIndex(u => u.id === req.params.id);
+  if (idx === -1) {
+    return res.status(404).json({ error: "Usuário não encontrado." });
   }
+  if (req.body.nome) usuarios[idx].nome = req.body.nome;
+  if (req.body.idade) usuarios[idx].idade = req.body.idade;
+  if (req.body.endereco) usuarios[idx].endereco = req.body.endereco;
+  if (req.body.email) usuarios[idx].email = req.body.email;
+  salvarUsuarios(usuarios);
+  res.json({ ok: true, message: "Usuário atualizado!", usuario: usuarios[idx] });
 });
 
+// Remover usuário
 app.delete("/remover-usuario/:id", (req, res) => {
-  try {
-    const usuarioIndex = usuarios.findIndex((u) => u.id === req.params.id);
-
-    if (usuarioIndex === -1) {
-      return res.status(404).json({ error: "Usuário não encontrado." });
-    }
-
-    const usuarioRemovido = usuarios[usuarioIndex];
-    usuarios.splice(usuarioIndex, 1); // Remove direto do array global
-
-    salvarUsuarios(usuarios);
-    console.log(`✔️ Usuário removido: ${JSON.stringify(usuarioRemovido)}`);
-    res.json({
-      ok: true,
-      message: "Usuário removido com sucesso!",
-      usuario: usuarioRemovido,
-    });
-  } catch (err) {
-    console.error("❌ Erro ao remover usuário:", err);
-    res.status(500).json({ error: "Não foi possível remover usuário." });
+  let usuarios = lerUsuarios();
+  const antes = usuarios.length;
+  usuarios = usuarios.filter(u => u.id !== req.params.id);
+  if (usuarios.length === antes) {
+    return res.status(404).json({ error: "Usuário não encontrado." });
   }
+  salvarUsuarios(usuarios);
+  res.json({ ok: true, message: "Usuário removido com sucesso." });
 });
-
-
-
-
 
 // Configura o Express para servir arquivos estáticos da pasta "public"
 // Isso permite acessar arquivos como index.html diretamente
 app.use(express.static(path.join(__dirname, "public")));
 
-// Ativa o CORS para permitir chamadas HTTP de outras origens (por exemplo, frontend em outro servidor)
 
-
-
-
-
-// Inicia o servidor e exibe a URL no console
-app.listen(PORT, HOST, () => {
-  console.log(`🚀 Servidor rodando em http://${HOST}:${PORT}`);
+// Inicia o servidor
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://${HOST}:${PORT}`);
 });
