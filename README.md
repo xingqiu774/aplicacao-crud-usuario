@@ -1,77 +1,72 @@
 # 📚 Projeto de Autoração Multimidia 2
 
+Este projeto é uma aplicação web simples para cadastro, listagem, atualização e remoção de usuários utilizando:
+
+**Node.js + Express** no backend
+**Armazenamento em NDJSON** (um JSON por linha)
+**Frontend estilizado** com HTML, CSS e JavaScript puro
+
 Este projeto foi feito como um fork do projeto do professor da disciplina.
 O time é composto por **Lucas Thagno de Souza Ferreira** e só.
 
 
 
+---
 
+## 📚 Funcionalidades
 
+### Cadastro de Usuário
 
+- Abertura via **modal estilizado** (não usa alert/prompt)
+- Validação de campos no servidor
+- Prevenção contra **palavras-chave SQL** e símbolos maliciosos
+- Feedback visual de sucesso
 
+### Listagem de Usuários
 
+- Tabela com cabeçalho ordenável
+- Estilo moderno, responsivo e leve
 
+### Atualização de Usuários
 
+- Botão "Alterar" abre um **formulário em modal** preenchido automaticamente
+- Permite editar todos os campos com validação
 
+### Remoção de Usuários
 
-
-
-
-
-## 📚 Aplicação de Geração e Manipulação de Usuários Fictícios
-
-Este projeto foi desenvolvido como parte da disciplina **Autoração Multimídia II** do curso de **Bacharelado em Sistemas e Mídias Digitais** da **Universidade Federal do Ceará (UFC)**.
-
-## 👨‍🏫 Autor
-
-**Prof. Wellington W. F. Sarmento**  
-Instituto Universidade Virtual (UFC Virtual)
-Universidade Federal do Ceará (UFC)
+- Ação "Remover" abre **modal de confirmação visual**, evitando popups nativos
+- Atualiza a tabela ao concluir
 
 ---
 
-## ✅ Requisitos Funcionais
+## 📚 Validação de Dados (lado servidor)
 
-| ID     | Descrição                                                                |
-| ------ | ------------------------------------------------------------------------ |
-| RF0001 | Gerar usuários fictícios com nome, idade, endereço e e-mail              |
-| RF0002 | Listar os usuários em uma interface web com paginação                    |
-| RF0003 | Ordenar os usuários por nome ou idade, de forma crescente ou decrescente |
-| RF0004 | Inserir um novo usuário na base de dados (arquivo JSON)                  |
-| RF0005 | Atualizar os dados de um usuário pelo ID                                 |
-| RF0006 | Remover um usuário pelo ID                                               |
-| RF0007 | Salvar e manter persistência dos usuários em arquivo JSON                |
+Todos os campos textuais passam por:
+
+- `.trim()` (remoção de espaços)
+- Remoção de: `" ' ? = :`
+- Filtragem de palavras proibidas: `SELECT`, `UPDATE`, `DELETE`, `ORDER BY`, `FROM`, `WHERE`, `CREATE`, `TABLE`, `DATABASE`
+
+Campos vazios após limpeza **bloqueiam o cadastro ou edição.**
 
 ---
 
-## 📘 Acesso ao Tutorial
+## 📚 Estrutura de Arquivos
 
-Você pode acessar um tutorial completo sobre estra aplicação de exemplo através deste link:
-👉 [`tutorial.md`](./public/tutorial.md)
-
----
-
-## 📂 Estrutura dos Arquivos
-
-- server.js: servidor Express com API RESTful
-- index.html: interface de listagem
-- script.js: funções de carregamento, ordenação e paginação
-- style.css: estilo da interface
-- usuarios.json: banco de dados local
-- gerar_usuarios_fake.js: gera usuários fictícios
-
-## 📘 Funcionalidades
-
-| ID     | Descrição                                                                | Implementado |
-| ------ | ------------------------------------------------------------------------ | ------------ |
-| RF0001 | Gerar usuários fictícios com nome, idade, endereço e e-mail              | ☑️           |
-| RF0002 | Listar os usuários em uma interface web com paginação                    | ☑️           |
-| RF0003 | Ordenar os usuários por nome ou idade, de forma crescente ou decrescente | ☑️           |
-| RF0004 | Inserir um novo usuário na base de dados (arquivo JSON)                  | ☑️           |
-| RF0005 | Atualizar os dados de um usuário (pelo ID)                               | ⬜           |
-| RF0006 | Remover um usuário do sistema (pelo ID\_                                 | ⬜           |
-| RNF001 | Salvar e manter persistência dos usuários em arquivo JSON                | ⬜           |
-| RNF002 | Paginar os usuários usando API (/list-users/:count?)                     | ⬜           |
+```
+├── server.js
+├── routes.js
+├── usuarios.ndjson
+├── public/
+│   ├── index.html
+│   ├── cadastra_usuario.html
+│   ├── update_user.html
+│   ├── remove_user.html
+│   ├── script.js
+│   ├── update_user.js
+│   ├── remove_user.js
+│   └── style.css
+```
 
 ---
 
@@ -88,18 +83,6 @@ Você pode acessar um tutorial completo sobre estra aplicação de exemplo atrav
 ---
 
 ## 🛠️ Como Baixar e Executar a Aplicação
-
-### ⚠️ IMPORTANTE: Criando um arquivo com _1.000.000 de usuários \_fake_
-
-Para que você possa usar corretamente este projeto é preciso criar o arquivo `usuarios.json`. Este arquivo é gerado através do programa `gerar_usuarios_fake.js`. Usando o seu terminal, vá na pasta do projeto e execute o seguinte comando:
-
-```javascript
-node gerar_usuarios_fake.js
-```
-
-O funcionamento da funcionalidade de geração dos usuários _fake_ se eoncontra no arquivo `criando-json-usuarios.md`, que pode ser acessado através deste link: [acesso à explicação]("./criando-json-usuarios.md").
-
----
 
 ### 1. Clone o repositório
 
@@ -123,6 +106,12 @@ npm start
 A aplicação estará disponível em: `http://localhost:3000`
 
 ---
+
+
+## 📚 É isso
+
+Este projeto foi desenvolvido como parte da disciplina **Autoração Multimídia II** do curso de **Bacharelado em Sistemas e Mídias Digitais** da **Universidade Federal do Ceará (UFC)**.
+
 
 ## 📝 Licença
 
